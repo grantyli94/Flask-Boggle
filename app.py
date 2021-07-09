@@ -24,6 +24,8 @@ def new_game():
     # get a unique id for the board we're creating
     game_id = str(uuid4())
     game = BoggleGame()
-    games[game_id] = game
+    
+    # creates entry in games dictionary with game object (line 10)
+    games[game_id] = game 
 
-    return {"gameId": "need-real-id", "board": "need-real-board"}
+    return {"gameId": game_id, "board": game.board}

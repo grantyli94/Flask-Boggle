@@ -2,6 +2,8 @@ from unittest import TestCase
 
 from app import app, games
 
+import json
+
 # Make Flask errors be real errors, not HTML pages with error info
 app.config['TESTING'] = True
 
@@ -23,12 +25,19 @@ class BoggleAppTestCase(TestCase):
 
         with self.client as client:
             response = client.get('/')
-            ...
-            # test that you're getting a template
+            html = response.get_data(as_text=True)
+            
+            self.assertEqual(response.status_code,200)
+            self.assertIn('<title>Boggle</title>',html)
 
     def test_api_new_game(self):
         """Test starting a new game."""
 
         with self.client as client:
-            ...
-            # write a test for this route
+            response = client.get('/api/new-game')
+            data = json.loads(response.data)
+
+            self.assertIsInstance(data["board"],list)
+            self.assertIsInstance(data['gameId'],str)
+            self.assertEqual(len(games),1)
+            self.assertEqual(response.status_code,200)
