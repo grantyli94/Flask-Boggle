@@ -37,7 +37,19 @@ class BoggleAppTestCase(TestCase):
             response = client.get('/api/new-game')
             data = json.loads(response.data)
 
-            self.assertIsInstance(data["board"],list)
+            self.assertIsInstance(data['board'],list)
             self.assertIsInstance(data['gameId'],str)
             self.assertEqual(len(games),1)
             self.assertEqual(response.status_code,200)
+
+    def test_api_score_word(self):
+        """ TODO """
+
+        with self.client as client:
+            route = client.get('/api/new-game')
+            game_data = json.loads(route.data)
+            response = client.post('/api/score-word',
+                                    data={'gameId': game_data['gameId'], 
+                                        'word': "hello"})
+            self.assertIn("ok", response) 
+
