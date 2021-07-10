@@ -29,22 +29,20 @@ def new_game():
     # creates entry in games dictionary with game object (line 10)
     games[game_id] = game 
 
-    return {"gameId": game_id, "board": game.board}
+    return jsonify({"gameId": game_id, "board": game.board})
 
 @app.route("/api/score-word", methods=["POST"])
 def score_word():
-    """ TODO """
- 
-    print(games)
+    """ Checks if word from POST request is a valid word and on the board"""
 
     id = request.json["gameId"]
     word = request.json["word"]
-    test_word = games[id].is_word_in_word_list(word)
-    test_board = games[id].check_word_on_board(word)
+    is_on_word_list = games[id].is_word_in_word_list(word)
+    is_on_board = games[id].check_word_on_board(word)
 
-    if test_word and test_board:
+    if is_on_word_list and is_on_board:
         return jsonify({"result": "ok"})
-    elif not test_board:
+    elif not is_on_board:
         return jsonify({"result": "not-on-board"})
     else:
         return jsonify({"result": "not-word"})

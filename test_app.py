@@ -4,12 +4,21 @@ from app import app, games
 
 import json
 
+from random import choice
+
 # Make Flask errors be real errors, not HTML pages with error info
 app.config['TESTING'] = True
 
 # This is a bit of hack, but don't use Flask DebugToolbar
 app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
 
+TEST_BOARD =[
+ [ "F", "O", "O", "R", "T"],
+ [ "D", "E", "A", "N", "T" ], 
+ [ "E", "F", "E", "T", "V" ], 
+ [ "B", "I", "O", "I", "N" ], 
+ [ "A", "B", "R", "B", "R" ] 
+]
 
 class BoggleAppTestCase(TestCase):
     """Test flask app of Boggle."""
@@ -35,7 +44,7 @@ class BoggleAppTestCase(TestCase):
 
         with self.client as client:
             response = client.get('/api/new-game')
-            data = json.loads(response.data)
+            data = response.get_json()
 
             self.assertIsInstance(data['board'],list)
             self.assertIsInstance(data['gameId'],str)
@@ -43,13 +52,27 @@ class BoggleAppTestCase(TestCase):
             self.assertEqual(response.status_code,200)
 
     def test_api_score_word(self):
-        """ TODO """
+        """ Test if score_word function returns correct JSON response """
 
         with self.client as client:
-            route = client.get('/api/new-game')
-            game_data = json.loads(route.data)
+            game = client.get('/api/new-game')
+            game_data = game.get_json()
+            games[game_data['gameId']].board = TEST_BOARD
+            
+            words = ["ANT","ABRB","PONY"]
+            word = choice(words)
+            
             response = client.post('/api/score-word',
-                                    data={'gameId': game_data['gameId'], 
-                                        'word': "hello"})
-            self.assertIn("ok", response) 
+                                    json={'gameId': game_data['gameId'], 
+                                          'word': word})
+            json_data = response.get_json()
+            
+            if word == "ANT":
+                self.assertIn("ok", json_data["result"])
+            elif word == "ABRB":
+                self.assertIn("not-word", json_data["result"])
+            else:
+                self.assertIn("not-on-board", json_data["result"])
+ 
+             
 

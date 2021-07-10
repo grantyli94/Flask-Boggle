@@ -6,6 +6,9 @@ const $wordInput = $("#wordInput");
 const $message = $(".msg");
 const $table = $("table");
 
+const HEIGHT = 5;
+const WIDTH = 5;
+
 let gameId;
 
 
@@ -23,6 +26,12 @@ async function start() {
 
 function displayBoard(board) {
   // $table.empty();
+  for (y = 0; y < HEIGHT; y++) {
+    $row = $("<tr>");
+    for (x = 0; x < WIDTH; x++) {
+
+    }
+  }
   // loop over board and create the DOM tr/td structure
 }
 
